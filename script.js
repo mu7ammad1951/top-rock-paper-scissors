@@ -12,6 +12,8 @@ body.insertBefore(scoreDiv, buttonPanel);
 
 let resultDiv = document.createElement("div")
 
+let gameOngoing = true;
+
 
 
 game()
@@ -21,23 +23,21 @@ function game() {
 
 
     let rockButton = document.querySelector("#Rock")
-    rockButton.addEventListener("click", ()=> 
-    {
-        playRound("Rock");
-    })
+    rockButton.addEventListener("click", () => playRound("Rock"));
+
     let paperButton = document.querySelector("#Paper")
-    paperButton.addEventListener("click", () => {
-        playRound("Paper");
-    })
+    paperButton.addEventListener("click",() =>  playRound("Paper"));
+
     let scissorButton = document.querySelector("#Scissors") 
-    scissorButton.addEventListener("click", () => {
-        playRound("Scissors")
-    })
+    scissorButton.addEventListener("click", () => playRound("Scissors"));
 }
 
 function playRound(playerSelection) {
+
+    if(gameOngoing) {
     let output = checkWinner(playerSelection);
 
+        
     switch(output[0]) {
         case 1:
             playerScore++;
@@ -48,19 +48,35 @@ function playRound(playerSelection) {
 
     }
 
-    console.log(output[1]);
-    console.log(`Score -> Player: ${playerScore} | Computer: ${computerScore}`);
-    scoreDiv.textContent = "Score: You - " + playerScore +" | " + "Computer - " + computerScore;
-    body.insertBefore(scoreDiv, buttonPanel);
-    resultDiv.textContent = output[1];
-    body.appendChild(resultDiv);
+
+    if(playerScore >= 5 || computerScore >=5) {
+        scoreDiv.textContent = "Score: You - " + playerScore +" | " + "Computer - " + computerScore;
+        body.insertBefore(scoreDiv, buttonPanel);
+        let winner = playerScore > computerScore ? "You" : "the Computer";
+        resultDiv.textContent = "The winner of the match is " + winner + "!"
+        body.appendChild(resultDiv);
+        gameOngoing = false;
 
 
-// if(playerScore == computerScore) {
-//     console.log("It's a draw!")
-// } else {
-//     console.log(playerScore > computerScore ? "Congratulations! You Win the Game!" : "You Lose the Game!");
-// }   
+    } else {
+
+
+        scoreDiv.textContent = "Score: You - " + playerScore +" | " + "Computer - " + computerScore;
+        body.insertBefore(scoreDiv, buttonPanel);
+        resultDiv.textContent = output[1];
+        body.appendChild(resultDiv);
+    }
+} else {
+    rockButton.disabled = true;
+    paperButton.disabled = true;
+    scissorButton.disabled = true;
+    return;
+}
+
+
+
+
+
 }
 
 
@@ -71,9 +87,9 @@ function checkWinner (playerSelection) {
     } else if(playerSelection.toUpperCase()=="ROCK" && computerSelection.toUpperCase() == "SCISSORS" ||
                 playerSelection.toUpperCase()=="PAPER" && computerSelection.toUpperCase() == "ROCK" ||
                 playerSelection.toUpperCase()=="SCISSORS" && computerSelection.toUpperCase() == "PAPER") {
-        return [1, `You Win! You:${playerSelection.toUpperCase()} beats Computer:${computerSelection.toUpperCase()}`]
+        return [1, `You Get a Point! ${playerSelection}(You) beats ${computerSelection}(Computer)`]
     } else {
-        return [0, `You Lose! Computer:${computerSelection.toUpperCase()} beats You:${playerSelection.toUpperCase()}`]
+        return [0, `Your Opponent Gets a Point! ${computerSelection}(Computer) beats ${playerSelection}(You)`]
     }
 }
 
